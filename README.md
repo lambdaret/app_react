@@ -68,3 +68,56 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+```
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash - &&\
+sudo apt-get install -y nodejs
+npx create-react-app app_react
+cd app_react
+```
+
+```
+# change react version
+
+// package.json : -> 17.0.2
+    "@testing-library/react": "^13.4.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+
+    "@testing-library/react": "^12.1.4",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+
+// index.js
+import { render } from "react-dom";
+
+const container = document.getElementById("root");
+render(<App />, container);
+
+// package.json
+  "babel": {
+    "plugins": [
+      "react-hot-loader/babel"
+    ],
+    "presets": [
+      "react-app"
+    ]
+  }
+
+npm i react-hot-loader --save
+npm install --save-dev @hot-loader/react-dom
+export CHOKIDAR_USEPOLLING=true
+export WATCHPACK_POLLING=true
+npm run start
+```
+
+```
+npm i react-router-dom -S
+```
+
+```
+<!-- npm i @material-ui/core
+npm i @material-ui/icons -->
+npm i @mui/icons-material -S
+
+```
