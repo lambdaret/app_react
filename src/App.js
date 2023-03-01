@@ -6,25 +6,15 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Main from './pages/Main';
 import ExchangeRate from './pages/ExchangeRate'
 
-// const queryClient = new QueryClient({
-//   defaultOptions: {
-//     queries: {
-//         // suspense: true
-//     }
-//   }  
-// });
 
 function App() {
   return (
-    // <QueryClientProvider client={queryClient}>
-    //   <ReactQueryDevtools initialIsOpen={true} />
-      <BrowserRouter>
+      <BrowserRouter basename={process.env.PUBLIC_URL}>
         <Routes>
-          <Route path="/" element={<Main />}></Route>
-          <Route path="/exchange-rate" element={<ExchangeRate />}></Route>
+          <Route exact path="/" element={<Main />}></Route>
+          <Route path="exchange-rate" element={<ExchangeRate />}></Route>
         </Routes>
       </BrowserRouter>
-    // </QueryClientProvider>
   );
 }
 

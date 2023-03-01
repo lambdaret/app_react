@@ -120,4 +120,6 @@ npm i react-router-dom -S
 npm i @material-ui/icons -->
 npm i @mui/icons-material -S
 
+
+npm i gh-pages
 ```
