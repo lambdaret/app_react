@@ -381,7 +381,7 @@ function ExchangeRate() {
               id="outlined-multiline-static"
               label="Exchange Rate"
               multiline
-              rows={10}
+              rows={18}
               sx={{ width: "100%" }}
               value={downloadData}
               // defaultValue=""
