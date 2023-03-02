@@ -116,8 +116,9 @@ npm i react-router-dom -S
 ```
 
 ```
-<!-- npm i @material-ui/core
-npm i @material-ui/icons -->
+npm i @material-ui/core -S
+npm i @material-ui/icons -S
+npm i @material-ui/styles -S
 npm i @mui/icons-material -S
 
 

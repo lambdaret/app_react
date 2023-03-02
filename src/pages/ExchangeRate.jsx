@@ -4,7 +4,9 @@ import { useEffect, useState } from "react";
 
 import Grid from "@mui/material/Grid";
 import Link from "@mui/material/Link";
+import Divider from "@mui/material/Divider";
 import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
 import Checkbox from "@mui/material/Checkbox";
 import TextField from "@mui/material/TextField";
 import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
@@ -12,7 +14,6 @@ import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import ClearIcon from "@mui/icons-material/Clear";
 import IconButton from "@mui/material/IconButton";
-// import Stack from '@mui/material/Stack';
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
@@ -23,12 +24,14 @@ function ExchangeRate() {
   const [sources, setSources] = useState([]);
   const [selectedStartDate, setSelectedStartDate] = useState(now);
   const [selectedEndDate, setSelectedEndDate] = useState(now);
-  const [selectedBase, setSelectedBase] = useState("");
+  const [selectedBase, setSelectedBase] = useState();
   const [selectedSymbols, setSelectedSymbols] = useState([]);
-  const [selectedAmount, setSelectedAmount] = useState("");
-  const [selectedPlaces, setSelectedPlaces] = useState("");
-  const [selectedFormat, setSelectedFormat] = useState("");
-  const [selectedSource, setSelectedSource] = useState("");
+  const [selectedAmount, setSelectedAmount] = useState();
+  const [selectedPlaces, setSelectedPlaces] = useState();
+  const [selectedFormat, setSelectedFormat] = useState();
+  const [selectedSource, setSelectedSource] = useState();
+  const [downloadUrls, setDownloadUrls] = useState([]);
+  const [downloadData, setDownloadData] = useState();
 
   const filterOptions = createFilterOptions({
     matchFrom: "any",
@@ -83,25 +86,52 @@ function ExchangeRate() {
     setSelectedSource(value);
   };
 
-  const handleRun = () => {
+  const handleGetData = () => {
     const params = {
-      start_date: selectedStartDate,
-      end_date: selectedEndDate,
-      base: selectedBase?.code,
+      start_date: selectedStartDate || "",
+      end_date: selectedEndDate || "",
+      base: selectedBase?.code || "",
       symbols: selectedSymbols
         ? selectedSymbols.map(({ code }) => code).join(",")
-        : null,
-      amount: selectedAmount,
-      places: selectedPlaces,
-      format: selectedFormat,
-      source: selectedSource?.source,
+        : "",
+      amount: selectedAmount || "",
+      places: selectedPlaces || "",
+      format: selectedFormat || "",
+      source: selectedSource?.source || "",
+    };
+    const url = "https://api.exchangerate.host/timeseries";
+    const ext = selectedFormat ? selectedFormat : "json";
+    const downloadUrl = `${url}?${new URLSearchParams(params).toString()}`;
+    setDownloadUrls([downloadUrl]);
+    axios.get(url, { params }).then((data) => {
+      if (ext === "json") {
+        setDownloadData(JSON.stringify(data.data, null, 2));
+      } else {
+        setDownloadData(data.data);
+      }
+    });
+  };
+
+  /*
+  const handleRun = () => {
+    const params = {
+      start_date: selectedStartDate || "",
+      end_date: selectedEndDate || "",
+      base: selectedBase?.code || "",
+      symbols: selectedSymbols
+        ? selectedSymbols.map(({ code }) => code).join(",")
+        : "",
+      amount: selectedAmount || "",
+      places: selectedPlaces || "",
+      format: selectedFormat || "",
+      source: selectedSource?.source || "",
     };
     const ext = selectedFormat ? selectedFormat : "json";
     const url = "https://api.exchangerate.host/timeseries";
     const method = "GET";
-    // axios.get(url, {params}).then((data)=>{
-    //     console.log('result', data);
-    // });
+    const downloadUrl = `${url}?${new URLSearchParams(params).toString()}`;
+    setDownloadUrls([downloadUrl]);
+
     axios
       .request({
         url,
@@ -110,15 +140,16 @@ function ExchangeRate() {
         params,
       })
       .then(({ data }) => {
-        const downloadUrl = window.URL.createObjectURL(new Blob([data]));
+        const objectUrl = window.URL.createObjectURL(new Blob([data]));
         const link = document.createElement("a");
-        link.href = downloadUrl;
+        link.href = objectUrl;
         link.setAttribute("download", `exchange_rate.${ext}`); //any other extension
         document.body.appendChild(link);
         link.click();
         link.remove();
       });
   };
+  */
 
   useEffect(() => {
     axios.get("https://api.exchangerate.host/symbols").then(({ data }) => {
@@ -168,6 +199,7 @@ function ExchangeRate() {
             onChange={handleChangeStartDate}
             size="small"
             sx={{ width: "100%" }}
+            inputProps={{ style: { paddingLeft: 5 } }}
             InputLabelProps={{
               shrink: true,
             }}
@@ -182,6 +214,7 @@ function ExchangeRate() {
             onChange={handleChangeEndDate}
             size="small"
             sx={{ width: "100%" }}
+            inputProps={{ style: { paddingLeft: 5 } }}
             InputLabelProps={{
               shrink: true,
             }}
@@ -197,7 +230,9 @@ function ExchangeRate() {
             // disableCloseOnSelect
             getOptionLabel={(option) => option}
             renderOption={(props, option, { selected }) => (
-              <li {...props}>{option}</li>
+              <li {...props} style={{ paddingTop: 0, paddingBottom: 0 }}>
+                {option}
+              </li>
             )}
             style={{ width: "100%" }}
             renderInput={(params) => (
@@ -217,7 +252,7 @@ function ExchangeRate() {
               getOptionLabel={(option) => option.code}
               filterOptions={filterOptions}
               renderOption={(props, option, { selected }) => (
-                <li {...props}>
+                <li {...props} style={{ paddingTop: 0, paddingBottom: 0 }}>
                   {option.code} - {option.description}
                 </li>
               )}
@@ -240,11 +275,11 @@ function ExchangeRate() {
               getOptionLabel={(option) => option.code}
               filterOptions={filterOptions}
               renderOption={(props, option, { selected }) => (
-                <li {...props}>
+                <li {...props} style={{ paddingTop: 0, paddingBottom: 0 }}>
                   <Checkbox
                     icon={icon}
                     checkedIcon={checkedIcon}
-                    style={{ marginRight: 8, padding: 0 }}
+                    style={{ marginRight: 8, paddingTop: 0, paddingBottom: 0 }}
                     checked={selected}
                   />
                   {option.code} - {option.description}
@@ -257,7 +292,7 @@ function ExchangeRate() {
             />
           )}
         </Grid>
-        <Grid item xs={4}>
+        <Grid item xs={6}>
           <TextField
             label="Amount"
             variant="outlined"
@@ -277,7 +312,7 @@ function ExchangeRate() {
             }}
           />
         </Grid>
-        <Grid item xs={2}>
+        <Grid item xs={6}>
           <TextField
             label="Places"
             variant="outlined"
@@ -297,7 +332,7 @@ function ExchangeRate() {
             }}
           />
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12}>
           {sources && (
             <Autocomplete
               // multiple
@@ -311,7 +346,7 @@ function ExchangeRate() {
               getOptionLabel={(option) => option.source}
               filterOptions={filterSourceOptions}
               renderOption={(props, option, { selected }) => (
-                <li {...props}>
+                <li {...props} style={{ paddingTop: 0, paddingBottom: 0 }}>
                   {option.source} - {option.description}{" "}
                   {option?.available_from_date
                     ? `(${option?.available_from_date}~)`
@@ -325,14 +360,44 @@ function ExchangeRate() {
           )}
         </Grid>
         <Grid item xs={12}>
-          <Button
-            variant="contained"
-            onClick={handleRun}
-            sx={{ display: "block" }}
-            size="small"
-          >
-            Download
-          </Button>
+          <Box sx={{ display: "flex" }}>
+            <Button variant="contained" onClick={handleGetData} size="small">
+              Get Data
+            </Button>
+            {/* <Divider
+              orientation="vertical"
+              variant="middle"
+              sx={{ margin: 0.5 }}
+              flexItem
+            />
+            <Button variant="contained" onClick={handleRun} size="small">
+              Download
+            </Button> */}
+          </Box>
+        </Grid>
+        {downloadData && (
+          <Grid item xs={12}>
+            <TextField
+              id="outlined-multiline-static"
+              label="Exchange Rate"
+              multiline
+              rows={10}
+              sx={{ width: "100%" }}
+              value={downloadData}
+              // defaultValue=""
+            />
+          </Grid>
+        )}
+        {downloadUrls &&
+          downloadUrls.map((link) => (
+            <Grid item xs={12} key={link}>
+              <Link href={link} target="_blank" download>
+                {link}
+              </Link>
+            </Grid>
+          ))}
+        <Grid item xs={12}>
+          <Divider />
         </Grid>
         <Grid item xs={12}>
           <Link href="https://exchangerate.host/#/docs" target="_blank">

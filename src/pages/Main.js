@@ -1,12 +1,11 @@
-import { Link } from 'react-router-dom';
-
+import { Link } from "react-router-dom";
 
 function Main() {
-    return (
+  return (
     <div>
-        <Link to={'/exchange-rate'}>Exchange Rate</Link>
+      <Link to={"/exchange-rate"}>Exchange Rate</Link>
     </div>
-    );
+  );
 }
 
 export default Main;
