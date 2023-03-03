@@ -152,6 +152,7 @@ function ExchangeRate() {
   */
 
   useEffect(() => {
+    document.title = "Exchange Rate";
     axios.get("https://api.exchangerate.host/symbols").then(({ data }) => {
       setSymbols(Object.values(data.symbols));
     });
